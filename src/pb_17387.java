@@ -10,33 +10,33 @@ public class pb_17387 {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int[] tmp1 = Stream.of(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-        int[] tmp2 = Stream.of(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        double[] tmp1 = Stream.of(br.readLine().split(" ")).mapToDouble(Double::parseDouble).toArray();
+        double[] tmp2 = Stream.of(br.readLine().split(" ")).mapToDouble(Double::parseDouble).toArray();
 
-        Integer[][] l1 = new Integer[][] {new Integer[]{tmp1[0], tmp1[1]}, new Integer[]{tmp1[2], tmp1[3]}};
-        Integer[][] l2 = new Integer[][] {new Integer[]{tmp2[0], tmp2[1]}, new Integer[]{tmp2[2], tmp2[3]}};
-        
+        Double[][] l1 = new Double[][] {new Double[]{tmp1[0], tmp1[1]}, new Double[]{tmp1[2], tmp1[3]}};
+        Double[][] l2 = new Double[][] {new Double[]{tmp2[0], tmp2[1]}, new Double[]{tmp2[2], tmp2[3]}};
+
         Arrays.sort(l1, (o1, o2) -> {
             if (o1[0] == o2[0]) {
-                return Integer.compare(o1[1], o2[1]);
+                return Double.compare(o1[1], o2[1]);
             } else {
-                return Integer.compare(o1[0], o2[0]);
+                return Double.compare(o1[0], o2[0]);
             }
         });
         Arrays.sort(l2, (o1, o2) -> {
             if (o1[0] == o2[0]) {
-                return Integer.compare(o1[1], o2[1]);
+                return Double.compare(o1[1], o2[1]);
             } else {
-                return Integer.compare(o1[0], o2[0]);
+                return Double.compare(o1[0], o2[0]);
             }
         });
 
 
 
-        int x1 = l1[0][0]; int y1 = l1[0][1];
-        int x2 = l1[1][0]; int y2 = l1[1][1];
-        int x3 = l2[0][0]; int y3 = l2[0][1];
-        int x4 = l2[1][0]; int y4 = l2[1][1];
+        double x1 = l1[0][0]; double y1 = l1[0][1];
+        double x2 = l1[1][0]; double y2 = l1[1][1];
+        double x3 = l2[0][0]; double y3 = l2[0][1];
+        double x4 = l2[1][0]; double y4 = l2[1][1];
 
         
         // 끝점이 같은 선분 -> 1
@@ -62,9 +62,9 @@ public class pb_17387 {
         else if (x1 == x2) {
 
             // L2 선분
-            double grad = (double) (y4 - y3) / (x4 - x3);
+            double grad = ((double) (y4 - y3)) / (x4 - x3);
             double y = grad * (x1 - x3) + y3;
-            if (y1 <= y && y <= y2) {
+            if ((double) y1 <= y && y <= (double) y2) {
                 isInterSect = true;
             }
         }
@@ -75,7 +75,7 @@ public class pb_17387 {
             // L1 선분
             double grad = (double) (y2 - y1) / (x2 - x1);
             double y = grad * (x3 - x1) + y1;
-            if (y3 <= y && y <= y4) {
+            if ((double) y3 <= y && y <= (double) y4) {
                 isInterSect = true;
             } 
         }
@@ -89,8 +89,8 @@ public class pb_17387 {
             double grad1 = (double) (y2 - y1) / (double) (x2 - x1);
             double grad2 = (double) (y4 - y3) / (double) (x4 - x3);
 
-            int startX = Math.max(x1, x3);
-            int endX = Math.min(x2, x4);
+            int startX = (int) Math.max(x1, x3);
+            int endX = (int) Math.min(x2, x4);
 
             for (int x = startX; x < endX; x++) {
                 double valueOfL1 = grad1 * (x-x1) + y1;
