@@ -6,16 +6,12 @@ public class pb_2618 {
 
     static int n, w;
     static int[] caseX, caseY, caseCop;
-    static ArrayList<HashMap<Integer[], Integer>> cache;
+    static HashMap<Integer, Integer> cache;
 
     static int moveCops(int first, int second, int event) {
-        if (event == w+1){
-            HashMap<Integer[], Integer> ret = new HashMap<>();
-            ret.put(new Integer[] {first, second}, 0);
-            cache.set(event, ret);
-            return 0;
-        } 
-        if (cache.get(event).get(new Integer[] {first, second}) != null) return cache.get(event).get(new Integer[] {first, second});
+        String key = first + " " + second + " " + event;
+        if (event == w+1) return 0;
+        if (cache.get(event) != null) return cache.get(event);
 
         int firstToEvent = (first == 0) 
         ? Math.abs((caseX[event] - 1)) + Math.abs((caseY[event] - 1)) 
@@ -28,15 +24,11 @@ public class pb_2618 {
         int moveSecond = secondToEvent + moveCops(first, event, event + 1);
         
         if (moveFirst <= moveSecond) {
-            HashMap<Integer[], Integer> tmp = new HashMap<>();
-            tmp.put(new Integer[] {first, second}, moveFirst);
-            cache.set(event, tmp);
+            cache.put(event, moveFirst);
             caseCop[event] = 1;
             return moveFirst;
         } else {
-            HashMap<Integer[], Integer> tmp = new HashMap<>();
-            tmp.put(new Integer[] {first, second}, moveSecond);
-            cache.set(event, tmp);
+            cache.put(event, moveSecond);
             caseCop[event] = 2;
             return moveSecond;
         }
@@ -71,10 +63,10 @@ public class pb_2618 {
         }
 
 
-        cache = new ArrayList<>();
-        for (int i = 0; i <= w+1; i++) {
-            cache.add(new HashMap<Integer[], Integer>());
-        }
+        cache = new HashMap<>();
+        // for (int i = 0; i <= w+1; i++) {
+        //     cache.add(new HashMap<String, Integer>());
+        // }
 
 
         int ret = moveCops(0, 0, 1);       
