@@ -9,15 +9,15 @@ public class pb_16437 {
     static ArrayList<ArrayList<Integer>> tree;
     static boolean[] visited;
    
-    static int getSheep(int curr) {
+    static long getSheep(int curr) {
         visited[curr] = true;
 
-        int cnt = island[curr];
+        long cnt = island[curr];
         for (int next : tree.get(curr)) {
             if (!visited[next]) {
                 if (island[next] > 0) cnt += getSheep(next);
                 else {
-                    int cand = getSheep(next);
+                    long cand = getSheep(next);
                     cnt += (cand > 0) ? cand : 0;
                 }
             }
@@ -52,7 +52,7 @@ public class pb_16437 {
 
         int root = 1;
         visited = new boolean[n+1];
-        int ret = getSheep(root);
+        long ret = getSheep(root);
         
         bw.write(ret + "");
         bw.flush();

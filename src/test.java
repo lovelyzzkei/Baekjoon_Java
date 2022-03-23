@@ -2,71 +2,68 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class test {    
+public class test {
 
     static int n;
-    static int[] birthNum = {8, 5, 3};
-    static final int INF = 1_000_001;
+    static int[] island;
+    static ArrayList<ArrayList<Integer>> tree;
+    static boolean[] visited;
+   
+    // 루트에서 시작하여 리프노드까지 내려감
+    // 이때 내려가면서 가는 길에 있는 늑대들의 수를 모두 더해줌
+    // 만약 현재의 섬에 있는 양의 수가 늑대의 수보다 많으면 그 차이만큼 반환
+    // 그렇지 않을 경우 0을 반환
+    static long getSheep(int curr, long numOfWolves) {
+        visited[curr] = true;
 
-    static int calcSumDigit(String num) {
-        int sum = 0;
-        for (int i = 0; i < num.length(); i++) {
-            sum += (num.charAt(i) - '0');
+        long animal = island[curr];
+        long cnt = (animal - numOfWolves > 0) ? animal-numOfWolves : 0;
+
+        for (int next : tree.get(curr)) {
+            if (!visited[next]) {
+                long nextWolves = (animal < 0) ? -animal : 0;
+                numOfWolves += nextWolves;
+                cnt += getSheep(next, numOfWolves);
+                numOfWolves -= nextWolves;
+            }
         }
-        return sum;
+
+        return cnt;
     }
+
+
 
     public static void main(String args[]) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int T = Integer.parseInt(br.readLine());
-        for (int t = 0; t < T; t++) {
-            n = Integer.parseInt(br.readLine());
-
-            Deque<String> q = new ArrayDeque<>();
-            q.add("3"); q.add("5"); q.add("8");
-
-
-            HashMap<String, Boolean> visited = new HashMap<>();
-            visited.put("3", true);
-            visited.put("5", true);
-            visited.put("8", true);
-
-            String ret = "";
-            boolean isArrived = false;
-            while (!q.isEmpty()) {
-
-                int qSize = q.size();
-                for (int k = 0; k < qSize; k++) {
-                    String curr = q.pop();
-                    int sumOfDigit = calcSumDigit(curr);
-
-                    if (sumOfDigit == n) {
-                        isArrived = true;
-                        ret = curr;
-                        break;
-                    }
-
-                    for (int b : birthNum) {
-                        String next = curr + b;
-
-                        if (sumOfDigit+b > n || visited.get(next) != null) continue;
-                        visited.put(next, true);
-                        q.add(next);
-                    }
-                }
-
-                if (isArrived) break;
-            }
-
-            bw.write((isArrived ? ret : -1) + "\n");
+        n = Integer.parseInt(br.readLine());
+        
+        tree = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            tree.add(new ArrayList<>());
         }
 
+        island = new int[n+1];
+        for (int i = 2; i < n+1; i++) {
+            String[] input = br.readLine().split(" ");
+            int num = Integer.parseInt(input[1]);
+            int u = Integer.parseInt(input[2]);
 
+            tree.get(i).add(u);
+            tree.get(u).add(i);
+
+            if (input[0].equals("S")) island[i] = num; 
+            else island[i] = -num;
+        }
+
+        int root = 1;
+        visited = new boolean[n+1];
+        long ret = getSheep(root, 0);
+        
+        bw.write(ret + "");
         bw.flush();
         bw.close();
 
     }
 }
-
