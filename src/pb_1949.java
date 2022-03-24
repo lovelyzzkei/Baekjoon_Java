@@ -38,9 +38,9 @@ public class pb_1949 {
         else {
             cache[curr][isGood] = 0;
             for (int next : tree.get(curr)) {
-                int nextGoodTown = goodTown(next, 1);
+                int nextGoodTown = Math.max(goodTown(next, 0), goodTown(next, 1));
                 
-                cache[curr][isGood] = nextGoodTown;
+                cache[curr][isGood] += nextGoodTown;
             }
         }
         return cache[curr][isGood];
@@ -83,9 +83,6 @@ public class pb_1949 {
         // 1번 마을이 우수 마을로 선정되는 경우와 그렇지 않은 경우 중의 최댓값을 반환
         int ret = Math.max(goodTown(1, 1), goodTown(1, 0));
 
-        for (int[] arr : cache) {
-            System.out.println(Arrays.toString(arr));
-        }
         bw.write(ret+ "");
         bw.flush();
         bw.close();
