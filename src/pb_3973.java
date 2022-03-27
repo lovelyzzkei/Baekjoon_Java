@@ -4,26 +4,24 @@ import java.util.stream.Stream;
 
 public class pb_3973 {
 
-    static int n;
-    static HashMap<Integer, HashMap<Integer, Integer>> cache;
+    static int c, n;
+    static int[] cache;
+    static boolean[] visited;
+    static ArrayList<ArrayList<Integer>> graph;
     static final int INF = 100001;
 
-    static int dfs(int curr, int prev) {
-        if (cache.get(curr).get(prev) != null && cache.get(curr).get(prev) != 0) return cache.get(curr).get(prev);
+
+    static int dfs(int curr, int dist) {
+        visited[curr] = true;
+        if (cache[curr] != -1) return cache[curr];
         
-        cache.get(curr).put(prev, 0);
-
-        // for (Integer i : cache.keySet()) {
-        //     System.out.print(cache.get(i).toString() + " ");
-        // }
-        // System.out.println();
-
-        for (Integer next : cache.get(curr).keySet()) {
-            if (next != prev && next != curr) {
-                cache.get(curr).put(prev, Math.max(cache.get(curr).get(prev), 1 + dfs(next, curr)));
+        for (int next : graph.get(curr)) {
+            if (!visited[next]) {
+                cache[curr] = Math.max(cache[curr], Math.max(dist, 1 + dfs(next, dist + 1)));
             }
         }
-        return cache.get(curr).get(prev);
+
+        return (cache[curr] != -1) ? cache[curr] : 0;
     }
 
 
@@ -31,37 +29,38 @@ public class pb_3973 {
     public static void main(String args[]) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        
-        int c = Integer.parseInt(br.readLine());
 
+        c = Integer.parseInt(br.readLine());
+        
         for (int t = 0; t < c; t++) {
-            n = Integer.parseInt(br.readLine());
+           n = Integer.parseInt(br.readLine());
 
-            cache = new HashMap<>();
-            for (int i = 0; i < n; i++) {
-                cache.put(i, new HashMap<Integer, Integer>());
-            }
+           graph = new ArrayList<>();
+           for (int i = 0; i < n; i++) {
+               graph.add(new ArrayList<>());
+           }
 
+           for (int i = 0; i < n-1; i++) {
+               String[] input = br.readLine().split(" ");
+               int a = Integer.parseInt(input[0]);
+               int b = Integer.parseInt(input[1]);
 
-            for (int i = 0; i < n-1; i++) {
-                String[] input = br.readLine().split(" ");
-                int a = Integer.parseInt(input[0]);
-                int b = Integer.parseInt(input[1]);
+               graph.get(a).add(b);
+               graph.get(b).add(a);
+           }
 
-                cache.get(a).put(b, 0);
-                cache.get(b).put(a, 0);
-            }
+           cache = new int[n];
+           Arrays.fill(cache, -1);
 
-            
+           int ret = INF;
+           for (int i = 0; i < n; i++) {
+                visited = new boolean[n];
+                ret = Math.min(ret, dfs(i, 0));
+           }    
 
-            int ret = INF;
-            for (int i = 0; i < n; i++) {
-                ret = Math.min(ret, dfs(i, i));
-            }
-
-            bw.write(ret + "\n");
+           System.out.println(Arrays.toString(cache));
+           bw.write(ret + "\n");
         }
-        
 
         bw.flush();
         bw.close();
