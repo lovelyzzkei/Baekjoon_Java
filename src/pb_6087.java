@@ -17,29 +17,6 @@ public class pb_6087 {
         return (0 <= y && y < h) && (0 <= x && x < w);
     }
 
-    // dir: 이전 칸에서의 방향
-    static int dp(int y, int x, int dir) {
-        if (y == destY && x == destX) return cache[y][x][dir] = 0;
-        if (cache[y][x][dir] != -1) return cache[y][x][dir];
-
-        cache[y][x][dir] = INF;
-        for (int i = 0; i < 4; i++) {
-            int ny = y + dy[i];
-            int nx = x + dx[i];
-            if (i != dir && i%2 == dir%2) continue;
-            if (inRange(ny, nx) && cache[ny][nx][i] != 2*INF) {
-                if (i == dir) {
-                    cache[y][x][dir] = Math.min(cache[y][x][dir], dp(ny, nx, i));
-                } else {
-                    cache[y][x][dir] = Math.min(cache[y][x][dir], 1 + dp(ny, nx, i));
-                }
-            }
-        }
-
-        return cache[y][x][dir];
-
-    }
-
     public static void main(String args[]) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -55,7 +32,7 @@ public class pb_6087 {
             char[] inputArr = br.readLine().toCharArray();
             for (int j = 0; j < w; j++) {
                 if (inputArr[j] == '.') Arrays.fill(cache[i][j], -1);
-                if (inputArr[j] == '*') Arrays.fill(cache[i][j], 2*INF);
+                if (inputArr[j] == '*') Arrays.fill(cache[i][j], INF);
                 if (inputArr[j] == 'C') {
                     Arrays.fill(cache[i][j], -1);
                     if (startY == -1) {
@@ -69,20 +46,40 @@ public class pb_6087 {
         }
 
         int ret = INF;
-        for (int dir = 0; dir < 4; dir++) {
-            int ny = startY + dy[dir];
-            int nx = startX + dx[dir];
 
-            if (inRange(ny, nx)) {
-                ret = Math.min(ret, dp(ny, nx, dir));
-            }
+        PriorityQueue<Integer[]> pq = new PriorityQueue<>((a, b)->(a[0]-b[0]));
+        for (int dir = 0; dir < 4; dir++) {
+            pq.add(new Integer[] {0, startY, startX, dir});
         }
 
-        for (int[][] arr : cache) {
-            for (int[] tmp : arr) {
-                System.out.print(Arrays.toString(tmp)+" ");
+        while (!pq.isEmpty()) {
+
+            Integer[] curr = pq.poll();
+            int numOfMirror = curr[0];
+            int y = curr[1];
+            int x = curr[2];
+            int dir = curr[3];
+
+            if (y == destY && x == destX) {
+                ret = numOfMirror;
+                break;
             }
-            System.out.println();
+
+            for (int i = 0; i < 4; i++) {
+                int ny = y + dy[i];
+                int nx = x + dx[i];
+
+                if (i != dir && i%2 == dir%2) continue;
+                if (inRange(ny, nx) && cache[ny][nx][i] != INF) {
+                    cache[y][x][dir] = INF; // 방문처리
+                    if (i == dir) {
+                        pq.add(new Integer[] {numOfMirror, ny, nx, i});
+                    } else {
+                        pq.add(new Integer[] {numOfMirror+1, ny, nx, i});
+                    }
+                }
+            }
+            
         }
 
         bw.write(ret + "");
