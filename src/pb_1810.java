@@ -24,7 +24,7 @@ public class pb_1810 {
         stones.put("0 0", 0.0);   // 시작점
 
         for (int i = 0; i < n; i++) {
-            stones.put(br.readLine().strip(), INF);
+            stones.put(br.readLine(), INF);
         }
 
         PriorityQueue<Double[]> pq = new PriorityQueue<Double[]>(new Comparator<Double[]>() {
